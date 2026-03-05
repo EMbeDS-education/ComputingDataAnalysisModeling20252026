@@ -1,5 +1,5 @@
 ######################################################### 
-###### Ridge & LASSO - Classroom Exercises - 6/3/2025 ###
+###### Ridge & LASSO - Classroom Exercises - 5/3/2026 ###
 ######################################################### 
 
 
@@ -29,7 +29,11 @@ df <- read.table('BODY_FAT.TXT', header=TRUE)
 names(df)
 
 # We want to predict “SiriBF.” using the other features, 
-# aside from “Density”. So we drop the “Density” column.
+# aside from “Density”. 
+# SiriBF: body fat percentage computed from body density using the Siri formula.
+# density: body density measured from body composition methods (e.g., underwater weighing).
+# SiriBF=(495/density)−450. They are perfectly correlated
+#So we drop the “Density” column.
 
 df <- df[,-1]
 
@@ -111,8 +115,19 @@ p = 10 # = Number of Candidate Variables
 k = 5 # = Number of Relevant Variables
 n = 500 # = Number of observations
 betas = (-1)^(1:k) # = Values for beta
-sigma1 = genPositiveDefMat(p,"unifcorrmat")$Sigma # sigma1 violates irc
-sigma2 = sigma1 # sigma2 satisfies irc
+sigma = genPositiveDefMat(p,"unifcorrmat")$Sigma # sigma1 violates irc
+sigma1 = sigma
+sigma1[9,1]=sigma1[9,1]-2
+sigma1[1,9]=sigma1[1,9]-2
+sigma1[10,1]=sigma1[10,1]+3
+sigma1[1,10]=sigma1[1,10]+3
+sigma1[7,4]=sigma1[7,4]+3
+sigma1[4,7]=sigma1[4,7]+3
+sigma1[6,5]=sigma1[6,5]+2
+sigma1[5,6]=sigma1[5,6]+2
+sigma1[10,6]=sigma1[10,6]-5
+sigma1[6,10]=sigma1[6,10]-5
+sigma2 = sigma # sigma2 satisfies irc
 sigma2[(k+1):p,1:k]=0 # removing correlation among active and nonactive variables
 sigma2[1:k,(k+1):p]=0
 # Verify irrepresentable condition
